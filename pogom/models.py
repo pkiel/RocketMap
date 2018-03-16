@@ -40,7 +40,7 @@ args = get_args()
 flaskDb = FlaskDB()
 cache = TTLCache(maxsize=100, ttl=60 * 5)
 
-db_schema_version = 28
+db_schema_version = 29
 
 
 class MyRetryDB(RetryOperationalError, PooledMySQLDatabase):
@@ -3547,6 +3547,10 @@ def database_migrate(db, old_ver):
         migrate(
             migrator.add_column('pokemon', 'weather_boosted_condition',
                                 SmallIntegerField(null=True))
+        )
+
+    if old_ver < 29:
+        #Do nothing because of this shitty remove of trainers
         )
 
     # Always log that we're done.
