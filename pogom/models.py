@@ -40,7 +40,7 @@ args = get_args()
 flaskDb = FlaskDB()
 cache = TTLCache(maxsize=100, ttl=60 * 5)
 
-db_schema_version = 29
+db_schema_version = 30
 
 
 class MyRetryDB(RetryOperationalError, PooledMySQLDatabase):
@@ -1803,9 +1803,9 @@ class Token(BaseModel):
 
 class HashKeys(BaseModel):
     key = Utf8mb4CharField(primary_key=True, max_length=20)
-    maximum = SmallIntegerField(default=0)
-    remaining = SmallIntegerField(default=0)
-    peak = SmallIntegerField(default=0)
+    maximum = IntegerField(default=0)
+    remaining = IntegerField(default=0)
+    peak = IntegerField(default=0)
     expires = DateTimeField(null=True)
     last_updated = DateTimeField(default=datetime.utcnow)
 
@@ -3551,6 +3551,14 @@ def database_migrate(db, old_ver):
 
     if old_ver < 29:
         #Do nothing because of this shitty remove of trainers
+        )
+
+    if old_ver < 30:
+        db.execute_sql(
+            'ALTER TABLE `hashkeys` '
+            'MODIFY COLUMN `maximum` INTEGER,'
+            'MODIFY COLUMN `remaining` INTEGER,'
+            'MODIFY COLUMN `peak` INTEGER;'
         )
 
     # Always log that we're done.
