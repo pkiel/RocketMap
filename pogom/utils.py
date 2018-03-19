@@ -22,7 +22,10 @@ from requests.packages.urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
 from cHaversine import haversine
 from pprint import pformat
+from time import strftime
 from timeit import default_timer
+
+from pgoapi.hash_server import HashServer
 
 log = logging.getLogger(__name__)
 
@@ -320,21 +323,17 @@ def get_args():
                         type=int, default=20)
     parser.add_argument('-kph', '--kph',
                         help=('Set a maximum speed in km/hour for scanner ' +
-                              'movement. 0 to disable. Default: 35.'),
+                              'movement. Default: 35, 0 to disable.'),
                         type=int, default=35)
     parser.add_argument('-hkph', '--hlvl-kph',
                         help=('Set a maximum speed in km/hour for scanner ' +
                               'movement, for high-level (L30) accounts. ' +
-                              '0 to disable. Default: 25.'),
+                              'Default: 25, 0 to disable.'),
                         type=int, default=25)
     parser.add_argument('-ldur', '--lure-duration',
                         help=('Change duration for lures set on pokestops. ' +
                               'This is useful for events that extend lure ' +
                               'duration.'), type=int, default=30)
-    parser.add_argument('-pd', '--purge-data',
-                        help=('Clear Pokemon from database this many hours ' +
-                              'after they disappear (0 to disable).'),
-                        type=int, default=0)
     parser.add_argument('-px', '--proxy',
                         help='Proxy url (e.g. socks5://127.0.0.1:9050)',
                         action='append')
@@ -390,6 +389,35 @@ def get_args():
               'queue falls behind.'),
         type=int,
         default=1)
+    group = parser.add_argument_group('Database Cleanup')
+    group.add_argument('-DC', '--db-cleanup',
+                       help='Enable regular database cleanup thread.',
+                       action='store_true', default=False)
+    group.add_argument('-DCw', '--db-cleanup-worker',
+                       help=('Clear worker status from database after X ' +
+                             'minutes of inactivity. ' +
+                             'Default: 30, 0 to disable.'),
+                       type=int, default=30)
+    group.add_argument('-DCp', '--db-cleanup-pokemon',
+                       help=('Clear pokemon from database X hours ' +
+                             'after they disappeared. ' +
+                             'Default: 0, 0 to disable.'),
+                       type=int, default=0)
+    group.add_argument('-DCg', '--db-cleanup-gym',
+                       help=('Clear gym details from database X hours ' +
+                             'after last gym scan. ' +
+                             'Default: 8, 0 to disable.'),
+                       type=int, default=8)
+    group.add_argument('-DCs', '--db-cleanup-spawnpoint',
+                       help=('Clear spawnpoint from database X hours ' +
+                             'after last valid scan. ' +
+                             'Default: 720, 0 to disable.'),
+                       type=int, default=720)
+    group.add_argument('-DCf', '--db-cleanup-forts',
+                       help=('Clear gyms and pokestops from database X hours '
+                             'after last valid scan. '
+                             'Default: 0, 0 to disable.'),
+                       type=int, default=0)
     parser.add_argument(
         '-wh',
         '--webhook',
@@ -400,8 +428,6 @@ def get_args():
     parser.add_argument('-gi', '--gym-info',
                         help=('Get all details about gyms (causes an ' +
                               'additional API hit for every gym).'),
-                        action='store_true', default=False)
-    parser.add_argument('-DC', '--enable-clean', help='Enable DB cleaner.',
                         action='store_true', default=False)
     parser.add_argument(
         '--wh-types',
@@ -459,10 +485,12 @@ def get_args():
     parser.add_argument('-sn', '--status-name', default=str(os.getpid()),
                         help=('Enable status page database update using ' +
                               'STATUS_NAME as main worker name.'))
-    parser.add_argument('-spp', '--status-page-password', default=None,
-                        help='Set the status page password.')
     parser.add_argument('-hk', '--hash-key', default=None, action='append',
-                        help='Key for hash server')
+                        help='Key for hash server.')
+    parser.add_argument('-hs', '--hash-service', default='bossland', type=str,
+                        help=('Hash service name. Supports bossland and'
+                              ' devkat hashing.'),
+                        choices=['bossland', 'devkat'])
     parser.add_argument('-novc', '--no-version-check', action='store_true',
                         help='Disable API version check.',
                         default=False)
@@ -491,6 +519,13 @@ def get_args():
     parser.add_argument('--log-path',
                         help=('Defines directory to save log files to.'),
                         default='logs/')
+    parser.add_argument('--log-filename',
+                        help=('Defines the log filename to be saved.'
+                              ' Allows date formatting, and replaces <SN>'
+                              " with the instance's status name. Read the"
+                              ' python time module docs for details.'
+                              ' Default: %%Y%%m%%d_%%H%%M_<SN>.log.'),
+                        default='%Y%m%d_%H%M_<SN>.log'),
     parser.add_argument('--dump',
                         help=('Dump censored debug info about the ' +
                               'environment and auto-upload to ' +
@@ -512,18 +547,30 @@ def get_args():
                          type=int, dest='verbose')
     rarity = parser.add_argument_group('Dynamic Rarity')
     rarity.add_argument('-Rh', '--rarity-hours',
-                        help=('Number of hours of Pokemon data to use' +
-                              ' to calculate dynamic rarity. Decimals' +
-                              ' allowed. Default: 48. 0 to use all data.'),
+                        help=('Number of hours of Pokemon data to use ' +
+                              'to calculate dynamic rarity. Decimals ' +
+                              'allowed. Default: 48, 0 to use all data.'),
                         type=float, default=48)
     rarity.add_argument('-Rf', '--rarity-update-frequency',
-                        help=('How often (in minutes) the dynamic rarity' +
-                              ' should be updated. Decimals allowed.' +
-                              ' Default: 0. 0 to disable.'),
+                        help=('How often (in minutes) the dynamic rarity ' +
+                              'should be updated. Decimals allowed. ' +
+                              'Default: 0, 0 to disable.'),
                         type=float, default=0)
+    statusp = parser.add_argument_group('Status Page')
+    statusp.add_argument('-SPp', '--status-page-password', default=None,
+                         help='Set the status page password.')
+    statusp.add_argument('-SPf', '--status-page-filter',
+                         help=('Filter worker status that are inactive for ' +
+                               'X minutes. Default: 30, 0 to disable.'),
+                         type=int, default=30)
     parser.set_defaults(DEBUG=False)
 
     args = parser.parse_args()
+
+    # Allow status name and date formatting in log filename.
+    args.log_filename = strftime(args.log_filename)
+    args.log_filename = args.log_filename.replace('<sn>', '<SN>')
+    args.log_filename = args.log_filename.replace('<SN>', args.status_name)
 
     if args.only_server:
         if args.location is None:
@@ -802,6 +849,19 @@ def get_args():
 
     args.locales_dir = 'static/dist/locales'
     args.data_dir = 'static/dist/data'
+
+    # Set hashing endpoint. 'bossland' doesn't need to be added here, it's
+    # the default in the API.
+    legal_endpoints = {
+        'devkat': 'https://hashing.devkat.org'
+    }
+
+    hash_service = args.hash_service.lower()
+    endpoint = legal_endpoints.get(hash_service, False)
+    if endpoint:
+        log.info('Using hash service: %s.', hash_service)
+        HashServer.endpoint = endpoint
+
     return args
 
 
@@ -1204,9 +1264,10 @@ def check_output_catch(command):
         return result.strip()
 
 
-# Automatically censor all necessary fields. Lists will return
-# their length, all other items will return 'censored_tag'.
-def _censor_args_namespace(args, censored_tag):
+# Automatically censor all necessary fields. Lists will return their
+# length, all other items will return 'empty_tag' if they're empty
+# or 'censored_tag' if not.
+def _censor_args_namespace(args, censored_tag, empty_tag):
     fields_to_censor = [
         'accounts',
         'accounts_L30',
@@ -1229,6 +1290,7 @@ def _censor_args_namespace(args, censored_tag):
         'db',
         'proxy_file',
         'log_path',
+        'log_filename',
         'encrypt_lib',
         'ssl_certificate',
         'ssl_privatekey',
@@ -1247,7 +1309,10 @@ def _censor_args_namespace(args, censored_tag):
         'status_name',
         'status_page_password',
         'hash_key',
-        'trusted_proxies'
+        'trusted_proxies',
+        'data_dir',
+        'locales_dir',
+        'shared_config'
     ]
 
     for field in fields_to_censor:
@@ -1259,7 +1324,10 @@ def _censor_args_namespace(args, censored_tag):
             if isinstance(value, list):
                 args[field] = len(value)
             else:
-                args[field] = censored_tag
+                if args[field]:
+                    args[field] = censored_tag
+                else:
+                    args[field] = empty_tag
 
     return args
 
@@ -1267,7 +1335,8 @@ def _censor_args_namespace(args, censored_tag):
 # Get censored debug info about the environment we're running in.
 def get_censored_debug_info():
     CENSORED_TAG = '<censored>'
-    args = _censor_args_namespace(vars(get_args()), CENSORED_TAG)
+    EMPTY_TAG = '<empty>'
+    args = _censor_args_namespace(vars(get_args()), CENSORED_TAG, EMPTY_TAG)
 
     # Get git status.
     status = check_output_catch('git status')
