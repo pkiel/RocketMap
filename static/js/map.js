@@ -701,7 +701,8 @@ function pokemonLabel(item) {
         <div class='pokemon container content-left'>
           <div>
             <img class='pokemon sprite' src='static/icons/${id}.png'>
-            <span class='pokemon'>` + i18n('Level') + `: </span><span class='pokemon no-encounter'>` + i18n('n/a') + `</span>
+            <span class='pokemon'>` + i18n('Level') + `: </span>
+            <span class='pokemon no-encounter'>` + i18n('n/a') + `</span>
             <span class='pokemon links exclude'><a href='javascript:excludePokemon(${id})'>` + i18n('Exclude') + `</a></span>
             <span class='pokemon links notify'><a href='javascript:notifyAboutPokemon(${id})'>` + i18n('Notify') + `</a></span>
             <span class='pokemon links remove'><a href='javascript:removePokemonMarker("${encounterId}")'>` + i18n('Remove') + `</a></span>
@@ -710,16 +711,22 @@ function pokemonLabel(item) {
       <div class='pokemon container content-right'>
         <div>
           <div class='pokemon disappear'>
-            <span class='label-countdown' disappears-at='${disappearTime}'>00m00s</span> ` + i18n('left') + ` (${moment(disappearTime).format('HH:mm')})
+            <span class='label-countdown' disappears-at='${disappearTime}'>00m00s</span> ` +
+            i18n('left') + ` (${moment(disappearTime).format('HH:mm')})
           </div>
           <div class='pokemon'>
-            ` + i18n('CP') + `: <span class='pokemon no-encounter'>` + i18n('No information') + `</span>
+            ` + i18n('CP') + `:
+            <span class='pokemon no-encounter'>` + i18n('No information') + `</span>
           </div>
           <div class='pokemon'>
-            ` + i18n('Moveset') + `: <span class='pokemon no-encounter'>` + i18n('No information') + `</span>
+            ` + i18n('Moveset') + `:
+            <span class='pokemon no-encounter'>` + i18n('No information') + `</span>
           </div>
           <div class='pokemon'>
-            ` + i18n('Weight') + `: <span class='pokemon no-encounter'>` + i18n('n/a') + `</span> | ` + i18n('Height') + `: <span class='pokemon no-encounter'>` + i18n('n/a') + `</span>
+            ` + i18n('Weight') + `:
+            <span class='pokemon no-encounter'>` + i18n('n/a') + `</span>
+            | ` + i18n('Height') + `:
+            <span class='pokemon no-encounter'>` + i18n('n/a') + `</span>
           </div>
           <div>
             <span class='pokemon navigate'><a href='javascript:void(0);' onclick='javascript:openMapDirections(${latitude},${longitude});' title='` + i18n('Open in Google Maps') + `'>${latitude.toFixed(6)}, ${longitude.toFixed(7)}</a></span>
@@ -2374,8 +2381,9 @@ function showGymDetails(id) { // eslint-disable-line no-unused-vars
                     <b>${result.guard_pokemon_name}</b>
 
                     <p style="font-size: .75em; margin: 5px;">
-                        ` + i18n('No additional gym information is available for this gym. Make sure you are collecting') + ` <a href="https://rocketmap.readthedocs.io/en/develop/extras/gyminfo.html">` + i18n('detailed gym info.') + `</a>
-                        ` + i18n("If you have detailed gym info collection running, this gym's Pokemon information may be out of date.") + `
+                        ` + i18n('No additional gym information is available for this gym. Make sure you are collecting') + `
+                        <a href="https://rocketmap.readthedocs.io/en/develop/extras/gyminfo.html">` + i18n('detailed gym info.') + `</a>
+                        ` + i18n('If you have detailed gym info collection running, this gym&quot;s Pokemon information may be out of date.') + `
                     </p>
                 </center>
             `
