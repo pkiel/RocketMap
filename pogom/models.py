@@ -3549,9 +3549,8 @@ def database_migrate(db, old_ver):
                                 SmallIntegerField(null=True))
         )
 
-    if old_ver < 29:
-        #Do nothing because of this shitty remove of trainers
-        )
+    # if old_ver < 29:
+        # Do nothing because of this shitty remove of trainers
 
     if old_ver < 30:
         db.execute_sql(
