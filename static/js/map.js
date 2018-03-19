@@ -186,8 +186,6 @@ $('#menu_table_icon').text(i18n('Icon'))
 $('#menu_table_name').text(i18n('Name'))
 $('#menu_table_count').text(i18n('Count'))
 
-
-
 //
 // Functions
 //
@@ -795,8 +793,8 @@ function gymLabel(gym, includeMembers = true) {
         subtitle = `
         <div>
             <img class='gym info strength' src='static/images/gym/Strength.png'>
-            <span class='gym info strength'>`
-              + i18n('Strength') + `: ${gymPoints} (${slotsString})
+            <span class='gym info strength'>` +
+              i18n('Strength') + `: ${gymPoints} (${slotsString})
             </span>
         </div>`
     }

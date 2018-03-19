@@ -35,7 +35,7 @@ $('#show_workers').html(i18n('Show Workers'))
 $('#show_instances').html(i18n('Show Instances'))
 $('#hash_key_status').html(i18n('Hash Key Status'))
 
-document.getElementsByName('password')[0].placeholder=i18n('Password');
+document.getElementsByName('password')[0].placeholder = i18n('Password')
 
 // Raw data updating
 var minUpdateDelay = 1000 // Minimum delay between updates (in ms).

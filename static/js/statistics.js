@@ -49,7 +49,7 @@ function loadRawData() {
         },
         error: function () {
             // Display error toast
-            toastr['error'](i8ln('Request failed while getting data. Retrying...', 'Error getting data'))
+            toastr['error'](i18n('Request failed while getting data. Retrying...', 'Error getting data'))
             toastr.options = {
                 'closeButton': true,
                 'debug': false,

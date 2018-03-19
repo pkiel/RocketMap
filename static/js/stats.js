@@ -1,3 +1,9 @@
+/* Localization */
+const language = document.documentElement.lang === '' ? 'en' : document.documentElement.lang
+var i18nDictionary = {}
+var languageLookups = 0
+var languageLookupThreshold = 3
+
 function countMarkers(map) { // eslint-disable-line no-unused-vars
     document.getElementById('stats-ldg-label').innerHTML = ''
     document.getElementById('stats-pkmn-label').innerHTML = 'Pokémon'
