@@ -689,12 +689,12 @@ class AccountSet(object):
 
     # Release an account back to the pool after it was used.
     def release(self, account):
-        if 'in_use' not in account:
-            log.error('Released account %s back to the AccountSet,'
-                      + " but it wasn't locked.",
-                      account['username'])
-        else:
-            account['in_use'] = False
+        # if 'in_use' not in account:
+            # log.error('Released account %s back to the AccountSet,'
+                      # + " but it wasn't locked.",
+                      # account['username'])
+        # else:
+        account['in_use'] = False
 
     # Get next account that is ready to be used for scanning.
     def next(self, set_name, coords_to_scan):
@@ -707,35 +707,37 @@ class AccountSet(object):
             now = default_timer()
 
             for i in range(len(account_set)):
-                account = account_set[i]
+                k = random.randint(0, len(account_set)-1)
+                time.sleep(random.uniform(.1,.2))
+                account = account_set[k]
 
                 # Make sure it's not in use.
-                if account.get('in_use', False):
-                    continue
+                # if account.get('in_use', False):
+                    # continue
 
                 # Make sure it's not captcha'd.
                 if account.get('captcha', False):
                     continue
 
                 # Check if we're below speed limit for account.
-                last_scanned = account.get('last_scanned', False)
+                # last_scanned = account.get('last_scanned', False)
 
-                if last_scanned and self.kph > 0:
-                    seconds_passed = now - last_scanned
-                    old_coords = account.get('last_coords', coords_to_scan)
+                # if last_scanned and self.kph > 0:
+                    # seconds_passed = now - last_scanned
+                    # old_coords = account.get('last_coords', coords_to_scan)
 
-                    distance_m = distance(old_coords, coords_to_scan)
+                    # distance_m = distance(old_coords, coords_to_scan)
 
-                    cooldown_time_sec = distance_m / self.kph * 3.6
+                    # cooldown_time_sec = distance_m / self.kph * 3.6
 
                     # Not enough time has passed for this one.
-                    if seconds_passed < cooldown_time_sec:
-                        continue
+                    # if seconds_passed < cooldown_time_sec:
+                        # continue
 
                 # We've found an account that's ready.
-                account['last_scanned'] = now
-                account['last_coords'] = coords_to_scan
-                account['in_use'] = True
+                # account['last_scanned'] = now
+                # account['last_coords'] = coords_to_scan
+                # account['in_use'] = True
 
                 return account
 
