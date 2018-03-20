@@ -5,14 +5,13 @@ import logging
 import time
 import random
 from threading import Lock
-from timeit import default_timer
 
 from pgoapi import PGoApi
 from pgoapi.exceptions import AuthException
 
 from .fakePogoApi import FakePogoApi
 from .pgoapiwrapper import PGoApiWrapper
-from .utils import in_radius, generate_device_info, distance
+from .utils import in_radius, generate_device_info
 from .proxy import get_new_proxy
 from .apiRequests import (send_generic_request, fort_details,
                           recycle_inventory_item, use_item_egg_incubator,
@@ -168,7 +167,7 @@ def rpc_login_sequence(args, api, account):
 
     # 3 - Get remote config version.
     log.debug('Downloading remote config version...')
-    old_config = account.get('remote_config', {})
+    # old_config = account.get('remote_config', {})
 
     try:
         req = api.create_request()
@@ -189,8 +188,8 @@ def rpc_login_sequence(args, api, account):
 
     # 4 - Get asset digest.
     log.debug('Fetching asset digest...')
-    config = account.get('remote_config', {})
     '''
+    config = account.get('remote_config', {})
     if config.get('asset_time', 0) > old_config.get('asset_time', 0):
         i = random.randint(0, 3)
         req_count = 0
@@ -689,11 +688,6 @@ class AccountSet(object):
 
     # Release an account back to the pool after it was used.
     def release(self, account):
-        # if 'in_use' not in account:
-            # log.error('Released account %s back to the AccountSet,'
-                      # + " but it wasn't locked.",
-                      # account['username'])
-        # else:
         account['in_use'] = False
 
     # Get next account that is ready to be used for scanning.
@@ -703,41 +697,14 @@ class AccountSet(object):
             # Readability.
             account_set = self.sets[set_name]
 
-            # Loop all accounts for a good one.
-            now = default_timer()
-
             for i in range(len(account_set)):
                 k = random.randint(0, len(account_set)-1)
-                time.sleep(random.uniform(.1,.2))
+                time.sleep(random.uniform(.1, .2))
                 account = account_set[k]
-
-                # Make sure it's not in use.
-                # if account.get('in_use', False):
-                    # continue
 
                 # Make sure it's not captcha'd.
                 if account.get('captcha', False):
                     continue
-
-                # Check if we're below speed limit for account.
-                # last_scanned = account.get('last_scanned', False)
-
-                # if last_scanned and self.kph > 0:
-                    # seconds_passed = now - last_scanned
-                    # old_coords = account.get('last_coords', coords_to_scan)
-
-                    # distance_m = distance(old_coords, coords_to_scan)
-
-                    # cooldown_time_sec = distance_m / self.kph * 3.6
-
-                    # Not enough time has passed for this one.
-                    # if seconds_passed < cooldown_time_sec:
-                        # continue
-
-                # We've found an account that's ready.
-                # account['last_scanned'] = now
-                # account['last_coords'] = coords_to_scan
-                # account['in_use'] = True
 
                 return account
 
