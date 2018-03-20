@@ -133,7 +133,7 @@ def rpc_login_sequence(args, api, account):
         req.call(False)
 
         total_req += 1
-        time.sleep(random.uniform(.43, .97))
+        # time.sleep(random.uniform(.43, .97))
     except Exception as e:
         log.exception('Login for account %s failed.'
                       + ' Exception in call request: %s.',
@@ -153,7 +153,7 @@ def rpc_login_sequence(args, api, account):
         parse_get_player(account, resp)
 
         total_req += 1
-        time.sleep(random.uniform(.53, 1.1))
+        # time.sleep(random.uniform(.53, 1.1))
         if account['warning']:
             log.warning('Account %s has received a warning.',
                         account['username'])
@@ -180,7 +180,7 @@ def rpc_login_sequence(args, api, account):
             req, account, settings=True, buddy=False, inbox=False)
 
         total_req += 1
-        time.sleep(random.uniform(.53, 1.1))
+        # time.sleep(random.uniform(.53, 1.1))
     except Exception as e:
         log.exception('Error while downloading remote config: %s.', e)
         raise LoginSequenceFail('Failed while getting remote config version in'
@@ -190,7 +190,7 @@ def rpc_login_sequence(args, api, account):
     # 4 - Get asset digest.
     log.debug('Fetching asset digest...')
     config = account.get('remote_config', {})
-
+    '''
     if config.get('asset_time', 0) > old_config.get('asset_time', 0):
         i = random.randint(0, 3)
         req_count = 0
@@ -273,7 +273,7 @@ def rpc_login_sequence(args, api, account):
             page_timestamp = resp.timestamp_ms
             log.debug('Completed %d requests to download'
                       + ' item templates.', req_count)
-
+    '''
     # Check tutorial completion.
     if not all(x in account['tutorials'] for x in (0, 1, 3, 4, 7)):
         log.info('Completing tutorial steps for %s.', account['username'])
@@ -287,7 +287,7 @@ def rpc_login_sequence(args, api, account):
             req.get_player_profile()
             send_generic_request(req, account, settings=True, inbox=False)
             total_req += 1
-            time.sleep(random.uniform(.2, .3))
+            # time.sleep(random.uniform(.2, .3))
         except Exception as e:
             log.exception('Login for account %s failed. Exception occurred ' +
                           'while fetching player profile: %s.',
@@ -304,7 +304,7 @@ def rpc_login_sequence(args, api, account):
         req.call(False)
 
         total_req += 1
-        time.sleep(random.uniform(.6, 1.1))
+        # time.sleep(random.uniform(.6, 1.1))
     except Exception as e:
         log.exception('Login for account %s failed. Exception in ' +
                       'retrieving Store Items: %s.', account['username'],
@@ -318,7 +318,7 @@ def rpc_login_sequence(args, api, account):
         send_generic_request(req, account, settings=True)
 
         total_req += 1
-        time.sleep(random.uniform(.45, .7))
+        # time.sleep(random.uniform(.45, .7))
     except Exception as e:
         log.exception('Login for account %s failed. Exception while ' +
                       'fetching all news: %s.', account['username'],
@@ -334,7 +334,7 @@ def rpc_login_sequence(args, api, account):
         send_generic_request(req, account, settings=True)
 
         total_req += 1
-        time.sleep(random.uniform(.45, .7))
+        # time.sleep(random.uniform(.45, .7))
     except Exception as e:
         log.exception('Login for account %s failed. Exception occurred ' +
                       'while fetching level-up rewards: %s.',
@@ -348,7 +348,7 @@ def rpc_login_sequence(args, api, account):
              account['username'],
              total_req)
 
-    time.sleep(random.uniform(3, 5))
+    # time.sleep(random.uniform(3, 5))
 
     if account['buddy'] == 0 and len(account['pokemons']) > 0:
         poke_id = random.choice(account['pokemons'].keys())
