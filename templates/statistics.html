@@ -2,7 +2,7 @@
 <html lang="{{lang}}">
 <head>
     <meta charset="UTF-8">
-    <title id="title">RocketMap - Statistics</title>
+    <title id="label_title">RocketMap - Statistics</title>
 
     <!-- Fav- & Apple-Touch-Icons -->
     <!-- Favicon -->
@@ -37,27 +37,27 @@
 <body class="statisticsPage">
         <!-- Header -->
         <header id="header">
-          <a href="#nav"><span id="options" class="label">Options</span></a>
+          <a href="#nav"><span id="label_options" class="label">Options</span></a>
           <h1><a href="./">RocketMap<img class='rocket icon' src='static/images/rocket.png'></a></h1>
           <a href="status" target="_blank" style="float: right;"><span class="label">Status</span></a>
         </header>
         <nav id="nav">
           <div id="nav-accordion" class="ui-accordion-content">
             <div class="form-control switch-container">
-              <h3 id="header_duration">Duration</h3>
+              <h3 id="nav_duration">Duration</h3>
               <select id="duration" name="duration" class="input">
-                <option id="last_hour" value="1">Last Hour</option>
-                <option id="last_3hours" value="3">Last 3 Hours</option>
-                <option id="last_6hours" value="6">Last 6 Hours</option>
-                <option id="last_12hours" value="12">Last 12 Hours</option>
-                <option id="last_day" value="24" selected="">Last Day</option>
-                <option id="last_7days" value="168">Last 7 Days</option>
-                <option id="last_14days" value="336">Last 14 Days</option>
-                <option id="last_month" value="730">Last Month</option>
-                <option id="last_3months" value="2190">Last 3 Months</option>
-                <option id="last_6months" value="4380">Last 6 Months</option>
-                <option id="last_year" value="8760">Last Year</option>
-                <option id="map_lifetime" value="876000">Map Lifetime</option>
+                <option id="nav_duration_last_hour" value="1">Last Hour</option>
+                <option id="nav_duration_last_3hours" value="3">Last 3 Hours</option>
+                <option id="nav_duration_last_6hours" value="6">Last 6 Hours</option>
+                <option id="nav_duration_last_12hours" value="12">Last 12 Hours</option>
+                <option id="nav_duration_last_day" value="24" selected="">Last Day</option>
+                <option id="nav_duration_last_7days" value="168">Last 7 Days</option>
+                <option id="nav_duration_last_14days" value="336">Last 14 Days</option>
+                <option id="nav_duration_last_month" value="730">Last Month</option>
+                <option id="nav_duration_last_3months" value="2190">Last 3 Months</option>
+                <option id="nav_duration_last_6months" value="4380">Last 6 Months</option>
+                <option id="nav_duration_last_year" value="8760">Last Year</option>
+                <option id="nav_duration_map_lifetime" value="876000">Map Lifetime</option>
               </select>
             </div>
           </div>
@@ -65,20 +65,20 @@
         <div class="spacing"></div>
         <div class="status_container" id="status_container">
             <div id="totals" class="worker">
-                <span id="name" class="name">Pokemon Seen in Last Day</span>
-                <span id="message" class="message"></span>
+                <span id="label_name" class="name">Pokemon Seen in Last Day</span>
+                <span id="label_message" class="message"></span>
             </div>
             <table id="stats_table" class="status_table">
                 <thead>
                     <tr class="status_row header">
                         <td class="status_cell"></td>
-                        <td id="td_pokedex" class="status_cell">Pokedex #</td>
-                        <td id="td_name" class="status_cell">Name</td>
-                        <td id="td_seen" class="status_cell">Seen</td>
-                        <td id="td_seen_percent" class="status_cell">Seen (%)</td>
-                        <td id="td_last_seen" class="status_cell">Last Seen</td>
-                        <td id="td_location" class="status_cell">Location</td>
-                        <td id="td_heatmap" class="status_cell">Heatmap</td>
+                        <td id="table_stats_pokedex" class="status_cell">Pokedex #</td>
+                        <td id="table_stats_name" class="status_cell">Name</td>
+                        <td id="table_stats_seen" class="status_cell">Seen</td>
+                        <td id="table_stats_seen_percent" class="status_cell">Seen (%)</td>
+                        <td id="table_stats_last_seen" class="status_cell">Last Seen</td>
+                        <td id="table_stats_location" class="status_cell">Location</td>
+                        <td id="table_stats_heatmap" class="status_cell">Heatmap</td>
                     </tr>
                 </thead>
                 <tbody>

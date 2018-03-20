@@ -1,7 +1,26 @@
-<html>
+<html lang="{{lang}}">
 <head>
-	<title>Nearby Pokémon</title>
+	<title id="label_title">RocketMap - Nearby Pokémon</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Fav- & Apple-Touch-Icons -->
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="{{ url_for('static', filename='images/appicons/favicon.ico').lstrip('/') }}" type="image/x-icon">
+	<!-- non-retina iPhone pre iOS 7 -->
+	<link rel="apple-touch-icon" href="{{ url_for('static', filename='images/appicons/114x114.png').lstrip('/') }}" sizes="57x57">
+	<!-- non-retina iPad pre iOS 7 -->
+	<link rel="apple-touch-icon" href="{{ url_for('static', filename='images/appicons/144x144.png').lstrip('/') }}" sizes="72x72">
+	<!-- non-retina iPad iOS 7 -->
+	<link rel="apple-touch-icon" href="{{ url_for('static', filename='images/appicons/152x152.png').lstrip('/') }}" sizes="76x76">
+	<!-- retina iPhone pre iOS 7 -->
+	<link rel="apple-touch-icon" href="{{ url_for('static', filename='images/appicons/114x114.png').lstrip('/') }}" sizes="114x114">
+	<!-- retina iPhone iOS 7 -->
+	<link rel="apple-touch-icon" href="{{ url_for('static', filename='images/appicons/120x120.png').lstrip('/') }}" sizes="120x120">
+	<!-- retina iPad pre iOS 7 -->
+	<link rel="apple-touch-icon" href="{{ url_for('static', filename='images/appicons/144x144.png').lstrip('/') }}" sizes="144x144">
+	<!-- retina iPad iOS 7 -->
+	<link rel="apple-touch-icon" href="{{ url_for('static', filename='images/appicons/152x152.png').lstrip('/') }}" sizes="152x152">
+	<!-- retina iPhone 6 iOS 7 -->
+	<link rel="apple-touch-icon" href="{{ url_for('static', filename='images/appicons/180x180.png').lstrip('/') }}" sizes="180x180">
 	<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/mobile.min.css').lstrip('/') }}" type="text/css" />
 	<!-- Custom CSS code-->
 		{% if show.custom_css %}
@@ -9,7 +28,7 @@
 		{% endif %}
 </head>
 <body class="mobilePage">
-	<h1>Nearby Pokémon</h1>
+	<h1 id="label_nearby_pokemon">Nearby Pokémon</h1>
 
 	<ol>
 {% for pokemon in pokemon_list[:20] %}
@@ -26,9 +45,9 @@
 	</ol>
 
 	<div id="nav">
-		<button>Refresh</button>
+		<button id="label_button_refresh">Refresh</button>
 		<div>
-			<label><input type="checkbox" id="use-loc">Use device location</label>
+			<label><input type="checkbox" id="use-loc"><span id="label_use_device_location">Use device location</span></label>
 		</div>
 	</div>
 

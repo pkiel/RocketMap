@@ -29,12 +29,12 @@ var i18nDictionary = {}
 var languageLookups = 0
 var languageLookupThreshold = 3
 
-$('#options').html(i18n('Options'))
-$('#login').html(i18n('Login'))
-$('#show_workers').html(i18n('Show Workers'))
-$('#show_instances').html(i18n('Show Instances'))
-$('#hash_key_status').html(i18n('Hash Key Status'))
-
+$('#label_title').html(i18n('RocketMap - Status'))
+$('#label_options').html(i18n('Options'))
+$('#label_button_login').html(i18n('Login'))
+$('#nav_show_workers').html(i18n('Show Workers'))
+$('#nav_show_instances').html(i18n('Show Instances'))
+$('#nav_hash_key_status').html(i18n('Hash Key Status'))
 document.getElementsByName('password')[0].placeholder = i18n('Password')
 
 // Raw data updating
