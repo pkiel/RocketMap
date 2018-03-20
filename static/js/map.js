@@ -111,7 +111,7 @@ var notifyNoIvTitle = '<pkm>'
  <dist>  - disappear time
  <udist> - time until disappear
  */
-var notifyText = 'disappears at <dist> (<udist>)'
+var notifyText = i18n('disappears at') + '<dist> (<udist>)'
 
 /* Localization */
 $('#label_title').text(i18n('RocketMap'))
