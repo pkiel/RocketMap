@@ -1,8 +1,14 @@
+/* Localization */
+const language = document.documentElement.lang === '' ? 'en' : document.documentElement.lang
+var i18nDictionary = {}
+var languageLookups = 0
+var languageLookupThreshold = 3
+
 function countMarkers(map) { // eslint-disable-line no-unused-vars
     document.getElementById('stats-ldg-label').innerHTML = ''
     document.getElementById('stats-pkmn-label').innerHTML = 'Pokémon'
-    document.getElementById('stats-gym-label').innerHTML = 'Gyms'
-    document.getElementById('stats-pkstop-label').innerHTML = 'PokéStops'
+    document.getElementById('stats-gym-label').innerHTML = i18n('Gyms')
+    document.getElementById('stats-pkstop-label').innerHTML = i18n('Pokéstops')
 
     var i = 0
     var arenaCount = []
@@ -47,7 +53,7 @@ function countMarkers(map) { // eslint-disable-line no-unused-vars
                 pokeCounts.push(
                     [
                         '<img class="pokemonListString" src=\'static/icons/' + pkmnCount[i].ID + '.png\' />',
-                        '<a href=\'http://pokemon.gameinfo.io/en/pokemon/' + pkmnCount[i].ID + '\' target=\'_blank\' title=\'View in Pokédex\' style=\'color: black;\'>' + pkmnCount[i].Name + '</a>',
+                        '<a href=\'http://pokemon.gameinfo.io/en/pokemon/' + pkmnCount[i].ID + '\' target=\'_blank\' title=\'' + i18n('View in Pokédex') + '\' style=\'color: black;\'>' + pkmnCount[i].Name + '</a>',
                         pkmnCount[i].Count,
                         (Math.round(pkmnCount[i].Count * 100 / pkmnTotal * 10) / 10) + '%'
                     ]
@@ -67,7 +73,7 @@ function countMarkers(map) { // eslint-disable-line no-unused-vars
             .clear()
             .draw()
 
-        document.getElementById('pokeStatStatus').innerHTML = 'Pokémon markers are disabled'
+        document.getElementById('pokeStatStatus').innerHTML = i18n('Pokémon markers are disabled')
         $('#pokemonList_table').dataTable().hide()
     }       // end Pokémon processing
 
@@ -87,24 +93,24 @@ function countMarkers(map) { // eslint-disable-line no-unused-vars
             }
         })
 
-        var arenaListString = '<table><th>Icon</th><th>Team Color</th><th>Count</th><th>%</th><tr><td></td><td>Total</td><td>' + arenaTotal + '</td></tr>'
+        var arenaListString = '<table><th>' + i18n('Icon') + '</th><th>' + i18n('Team Color') + '</th><th>' + i18n('Count') + '</th><th>%</th><tr><td></td><td>' + i18n('Total') + '</td><td>' + arenaTotal + '</td></tr>'
         for (i = 0; i < arenaCount.length; i++) {
             if (arenaCount[i] > 0) {
                 if (i === 1) {
-                    arenaListString += '<tr><td><img class="arenaListString" src="static/images/gym/Mystic.png" /></td><td>' + 'Mystic' + '</td><td>' + arenaCount[i] + '</td><td>' + Math.round(arenaCount[i] * 100 / arenaTotal * 10) / 10 + '%</td></tr>'
+                    arenaListString += '<tr><td><img class="arenaListString" src="static/images/gym/Mystic.png" /></td><td>' + i18n('Mystic') + '</td><td>' + arenaCount[i] + '</td><td>' + Math.round(arenaCount[i] * 100 / arenaTotal * 10) / 10 + '%</td></tr>'
                 } else if (i === 2) {
-                    arenaListString += '<tr><td><img class="arenaListString" src="static/images/gym/Valor.png" /></td><td>' + 'Valor' + '</td><td>' + arenaCount[i] + '</td><td>' + Math.round(arenaCount[i] * 100 / arenaTotal * 10) / 10 + '%</td></tr>'
+                    arenaListString += '<tr><td><img class="arenaListString" src="static/images/gym/Valor.png" /></td><td>' + i18n('Valor') + '</td><td>' + arenaCount[i] + '</td><td>' + Math.round(arenaCount[i] * 100 / arenaTotal * 10) / 10 + '%</td></tr>'
                 } else if (i === 3) {
-                    arenaListString += '<tr><td><img class="arenaListString" src="static/images/gym/Instinct.png" /></td><td>' + 'Instinct' + '</td><td>' + arenaCount[i] + '</td><td>' + Math.round(arenaCount[i] * 100 / arenaTotal * 10) / 10 + '%</td></tr>'
+                    arenaListString += '<tr><td><img class="arenaListString" src="static/images/gym/Instinct.png" /></td><td>' + i18n('Instinct') + '</td><td>' + arenaCount[i] + '</td><td>' + Math.round(arenaCount[i] * 100 / arenaTotal * 10) / 10 + '%</td></tr>'
                 } else {
-                    arenaListString += '<tr><td><img class="arenaListString" src="static/images/gym/Uncontested.png" /></td><td>' + 'Uncontested' + '</td><td>' + arenaCount[i] + '</td><td>' + Math.round(arenaCount[i] * 100 / arenaTotal * 10) / 10 + '%</td></tr>'
+                    arenaListString += '<tr><td><img class="arenaListString" src="static/images/gym/Uncontested.png" /></td><td>' + i18n('Uncontested') + '</td><td>' + arenaCount[i] + '</td><td>' + Math.round(arenaCount[i] * 100 / arenaTotal * 10) / 10 + '%</td></tr>'
                 }
             }
         }
         arenaListString += '</table>'
         document.getElementById('arenaList').innerHTML = arenaListString
     } else {
-        document.getElementById('arenaList').innerHTML = 'Gyms markers are disabled'
+        document.getElementById('arenaList').innerHTML = i18n('Gyms markers are disabled')
     }
 
     if (Store.get('showPokestops')) {
@@ -129,19 +135,42 @@ function countMarkers(map) { // eslint-disable-line no-unused-vars
                 pokestopTotal++
             }
         })
-        var pokestopListString = '<table><th>Icon</th><th>Status</th><th>Count</th><th>%</th><tr><td></td><td>Total</td><td>' + pokestopTotal + '</td></tr>'
+        var pokestopListString = '<table><th>' + i18n('Icon') + '</th><th>' + i18n('Status') + '</th><th>' + i18n('Count') + '</th><th>%</th><tr><td></td><td>' + i18n('Total') + '</td><td>' + pokestopTotal + '</td></tr>'
         for (i = 0; i < pokestopCount.length; i++) {
             if (pokestopCount[i] > 0) {
                 if (i === 0) {
-                    pokestopListString += '<tr><td><img class="pokestopListString" src="static/images/pokestop/Pokestop.png" /></td><td>' + 'Not Lured' + '</td><td>' + pokestopCount[i] + '</td><td>' + Math.round(pokestopCount[i] * 100 / pokestopTotal * 10) / 10 + '%</td></tr>'
+                    pokestopListString += '<tr><td><img class="pokestopListString" src="static/images/pokestop/Pokestop.png" /></td><td>' + i18n('Not Lured') + '</td><td>' + pokestopCount[i] + '</td><td>' + Math.round(pokestopCount[i] * 100 / pokestopTotal * 10) / 10 + '%</td></tr>'
                 } else if (i === 1) {
-                    pokestopListString += '<tr><td><img class="pokestopListString" src="static/images/pokestop/PokestopLured.png" /></td><td>' + 'Lured' + '</td><td>' + pokestopCount[i] + '</td><td>' + Math.round(pokestopCount[i] * 100 / pokestopTotal * 10) / 10 + '%</td></tr>'
+                    pokestopListString += '<tr><td><img class="pokestopListString" src="static/images/pokestop/PokestopLured.png" /></td><td>' + i18n('Lured') + '</td><td>' + pokestopCount[i] + '</td><td>' + Math.round(pokestopCount[i] * 100 / pokestopTotal * 10) / 10 + '%</td></tr>'
                 }
             }
         }
         pokestopListString += '</table>'
         document.getElementById('pokestopList').innerHTML = pokestopListString
     } else {
-        document.getElementById('pokestopList').innerHTML = 'PokéStops markers are disabled'
+        document.getElementById('pokestopList').innerHTML = i18n('Pokéstops markers are disabled')
+    }
+}
+
+function i18n(word) {
+    if ($.isEmptyObject(i18nDictionary) && language !== 'en' && languageLookups < languageLookupThreshold) {
+        $.ajax({
+            url: 'static/dist/locales/' + language + '.min.json',
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                i18nDictionary = data
+            },
+            error: function (jqXHR, status, error) {
+                console.log('Error loading i18n dictionary: ' + error)
+                languageLookups++
+            }
+        })
+    }
+    if (word in i18nDictionary) {
+        return i18nDictionary[word]
+    } else {
+        // Word doesn't exist in dictionary return it as is
+        return word
     }
 }

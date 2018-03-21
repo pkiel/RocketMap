@@ -1,4 +1,8 @@
 {
+  "none": {
+    "name": "Hidden",
+    "icon": "static/images/markers/transparent.png"
+  },
   "backpack": {
     "name": "Backpack",
     "icon": "static/images/markers/backpack.png"
@@ -30,10 +34,6 @@
   "hyperpotion": {
     "name": "Hyper Potion",
     "icon": "static/images/markers/hyperpotion.png"
-  },
-  "none": {
-    "name": "Hidden",
-    "icon": "static/images/markers/transparent.png"
   },
   "incense": {
     "name": "Incense",

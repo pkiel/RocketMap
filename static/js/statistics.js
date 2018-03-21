@@ -1,6 +1,29 @@
 /* Main stats page */
 var rawDataIsLoading = false
 
+/* Localization */
+const language = document.documentElement.lang === '' ? 'en' : document.documentElement.lang
+var i18nDictionary = {}
+var languageLookups = 0
+var languageLookupThreshold = 3
+
+$('#label_title').text(i18n('RocketMap - Statistics'))
+$('#label_options').text(i18n('Options'))
+$('#nav_duration').text(i18n('Duration'))
+$('#nav_duration_last_hour').text(i18n('Last Hour'))
+$('#nav_duration_last_3hours').text(i18n('Last') + ' 3 ' + i18n('Hours'))
+$('#nav_duration_last_6hours').text(i18n('Last') + ' 6 ' + i18n('Hours'))
+$('#nav_duration_last_12hours').text(i18n('Last') + ' 12 ' + i18n('Hours'))
+$('#nav_duration_last_day').text(i18n('Last Day'))
+$('#nav_duration_last_7days').text(i18n('Last') + ' 7 ' + i18n('Days'))
+$('#nav_duration_last_14days').text(i18n('Last') + ' 14 ' + i18n('Days'))
+$('#nav_duration_last_month').text(i18n('Last Month'))
+$('#nav_duration_last_3month').text(i18n('Last') + ' 3 ' + i18n('Months'))
+$('#nav_duration_last_6month').text(i18n('Last') + ' 6 ' + i18n('Months'))
+$('#nav_duration_last_year').text(i18n('Last Year'))
+$('#nav_duration_map_lifetime').text(i18n('Map Lifetime'))
+
+
 function loadRawData() {
     return $.ajax({
         url: 'raw_data',
@@ -26,7 +49,7 @@ function loadRawData() {
         },
         error: function () {
             // Display error toast
-            toastr['error']('Request failed while getting data. Retrying...', 'Error getting data')
+            toastr['error'](i18n('Request failed while getting data. Retrying...', 'Error getting data'))
             toastr.options = {
                 'closeButton': true,
                 'debug': false,
@@ -61,10 +84,10 @@ function processSeen(seen) {
                             <i class="pokemon-sprite n${pokemonItem.pokemon_id}"</i>
                         </td>
                         <td class="status_cell">
-                            ${pokemonItem.pokemon_id}                        
+                            ${pokemonItem.pokemon_id}
                         </td>
                         <td class="status_cell">
-                            <a href="http://pokemon.gameinfo.io/en/pokemon/${pokemonItem.pokemon_id}" target="_blank" title="View in Pokedex">
+                            <a href="http://pokemon.gameinfo.io/en/pokemon/${pokemonItem.pokemon_id}" target="_blank" title="` + i18n('View in Pokedex') + `">
                                 ${pokemonItem.pokemon_name}
                             </a>
                         </td>
@@ -82,7 +105,7 @@ function processSeen(seen) {
                         </td>
                         <td class="status_cell">
                             <a href="javascript:void(0);" onclick="javascript:showOverlay(${pokemonItem.pokemon_id});">
-                                All Locations
+                                ` + i18n('Show Heatmap') + `
                             </a>
                         </td>
                      </tr>`)
@@ -103,9 +126,16 @@ function updateStats() {
 
         processSeen(result.seen)
 
-        var header = 'Pokemon Seen in ' + $('#duration option:selected').text()
-        $('#name').html(header)
-        $('#message').html('Total: ' + result.seen.total.toLocaleString())
+        var header = i18n('Pokemon Seen in') + ' ' + $('#duration option:selected').text()
+        $('#label_name').html(header)
+        $('#label_message').html(i18n('Total') + ': ' + result.seen.total.toLocaleString())
+        $('#table_stats_pokedex').html(i18n('Pokédex'))
+        $('#table_stats_name').html(i18n('Name'))
+        $('#table_stats_seen').html(i18n('Seen'))
+        $('#table_stats_seen_percent').html(i18n('Seen') + '(%)')
+        $('#table_stats_last_seen').html(i18n('Last Seen'))
+        $('#table_stats_location').html(i18n('Location'))
+        $('#table_stats_heatmap').html(i18n('Heatmap'))
         $('#stats_table')
             .DataTable({
                 paging: false,
@@ -172,7 +202,7 @@ function loadDetails() {
         },
         error: function () {
             // Display error toast
-            toastr['error']('Request failed while getting data. Retrying...', 'Error getting data')
+            toastr['error'](i18n('Request failed while getting data. Retrying...', 'Error getting data'))
             toastr.options = {
                 'closeButton': true,
                 'debug': false,
@@ -431,18 +461,18 @@ function appearanceTab(item) {
             times = '<div class="row' + (key % 2) + '">' + saw + '</div>' + times
         })
         return `<div>
-                                <a href="javascript:closeTimes();">Close this tab</a>
+                                <a href="javascript:closeTimes();">` + i18n('Close this tab') + `</a>
                         </div>
                         <div class="row1">
-                                <strong>Lat:</strong> ${item['latitude'].toFixed(7)}
+                                <strong>` + i18n('Lat') + `:</strong> ${item['latitude'].toFixed(7)}
                         </div>
                         <div class="row0">
-                                <strong>Long:</strong> ${item['longitude'].toFixed(7)}
+                                <strong>` + i18n('Lon') + `:</strong> ${item['longitude'].toFixed(7)}
                         </div>
                         <div class="row1">
-                            <strong>Appearances:</strong> ${item['count'].toLocaleString()}
+                            <strong>` + i18n('Appearances') + `:</strong> ${item['count'].toLocaleString()}
                         </div>
-                        <div class="row0"><strong>Times:</strong></div>
+                        <div class="row0"><strong>` + i18n('Times') + `:</strong></div>
                         <div>
                                 ${times}
                         </div>`
@@ -468,4 +498,27 @@ function updateDetails() {
 
 if (location.href.match(/overlay_[0-9]+/g)) {
     showOverlay(location.href.replace(/^.*overlay_([0-9]+).*$/, '$1'))
+}
+
+function i18n(word) {
+    if ($.isEmptyObject(i18nDictionary) && language !== 'en' && languageLookups < languageLookupThreshold) {
+        $.ajax({
+            url: 'static/dist/locales/' + language + '.min.json',
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                i18nDictionary = data
+            },
+            error: function (jqXHR, status, error) {
+                console.log('Error loading i18n dictionary: ' + error)
+                languageLookups++
+            }
+        })
+    }
+    if (word in i18nDictionary) {
+        return i18nDictionary[word]
+    } else {
+        // Word doesn't exist in dictionary return it as is
+        return word
+    }
 }

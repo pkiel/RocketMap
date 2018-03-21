@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{lang}}">
 <head>
     <meta charset="UTF-8">
-    <title>RocketMap - Status</title>
+    <title id="label_title">RocketMap - Status</title>
 
     <!-- Fav- & Apple-Touch-Icons -->
     <!-- Favicon -->
@@ -37,13 +37,13 @@
 <body class="statusPage">
 <!-- Header -->
 <header id="header">
-    <a href="#nav"><span class="label">Options</span></a>
+    <a href="#nav"><span id="label_options" class="label">Options</span></a>
     <h1><a href="./">RocketMap<img class='rocket icon' src='static/images/rocket.png'></a></h1>
 </header>
 <nav id="nav">
   <div id="nav-accordion">
     <div class="form-control switch-container">
-     <h3>Show Workers</h3>
+     <h3 id="nav_show_workers">Show Workers</h3>
      <div class="onoffswitch">
        <input id="showworker-switch" type="checkbox" name="showworker-switch" class="onoffswitch-checkbox" checked>
        <label class="onoffswitch-label" for="showworker-switch">
@@ -53,7 +53,7 @@
      </div>
     </div>
     <div class="form-control switch-container">
-     <h3>Show Instances</h3>
+     <h3 id="nav_show_instances">Show Instances</h3>
      <div class="onoffswitch">
        <input id="showinstances-switch" type="checkbox" name="showinstances-switch" class="onoffswitch-checkbox" checked>
        <label class="onoffswitch-label" for="showinstances-switch">
@@ -63,7 +63,7 @@
      </div>
     </div>
     <div class="form-control switch-container">
-      <h3>Hash Key Status</h3>
+      <h3 id="nav_hash_key_status">Hash Key Status</h3>
       <div class="onoffswitch">
         <input id="hashkey-switch" type="checkbox" name="hashkey-switch" class="onoffswitch-checkbox" checked>
         <label class="onoffswitch-label" for="hashkey-switch">
@@ -78,8 +78,8 @@
 <div class="status_container" id="status_container">
     <div class="status_form">
         <form class="login-form" id="password_form">
-            <input id="password" type="password" placeholder="password"/>
-            <button>login</button>
+            <input id="password" name="password" type="password" placeholder="password"/>
+            <button id="label_button_login">login</button>
         </form>
     </div>
     <div id="stats_worker"></div>

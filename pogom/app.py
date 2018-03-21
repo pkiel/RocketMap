@@ -519,6 +519,7 @@ class Pogom(Flask):
                                pokemon_list=pokemon_list,
                                origin_lat=lat,
                                origin_lng=lon,
+                               lang=args.locale,
                                show=visibility_flags
                                )
 
@@ -533,6 +534,7 @@ class Pogom(Flask):
                                lat=self.current_location[0],
                                lng=self.current_location[1],
                                gmaps_key=args.gmaps_key,
+                               lang=args.locale,
                                show=visibility_flags
                                )
 
@@ -552,6 +554,7 @@ class Pogom(Flask):
             abort(404)
 
         return render_template('status.html',
+                               lang=args.locale,
                                show=visibility_flags)
 
     def post_status(self):

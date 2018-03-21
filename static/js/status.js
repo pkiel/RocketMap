@@ -23,6 +23,20 @@ var captchasPerHour
 var captchasCost
 var captchasCostMonthly
 
+/* Localization */
+const language = document.documentElement.lang === '' ? 'en' : document.documentElement.lang
+var i18nDictionary = {}
+var languageLookups = 0
+var languageLookupThreshold = 3
+
+$('#label_title').html(i18n('RocketMap - Status'))
+$('#label_options').html(i18n('Options'))
+$('#label_button_login').html(i18n('Login'))
+$('#nav_show_workers').html(i18n('Show Workers'))
+$('#nav_show_instances').html(i18n('Show Instances'))
+$('#nav_hash_key_status').html(i18n('Hash Key Status'))
+document.getElementsByName('password')[0].placeholder = i18n('Password')
+
 // Raw data updating
 var minUpdateDelay = 1000 // Minimum delay between updates (in ms).
 var lastRawUpdateTime = new Date()
@@ -169,9 +183,9 @@ function processHashKeys(i, hashkey) {
     const lastUpdated = getFormattedDate(new Date(hashkey['last_updated']))
     var expires = getFormattedDate(new Date(hashkey['expires']))
     if (!moment(expires).unix()) {
-        expires = 'Unknown/Invalid'
+        expires = i18n('Unknown/Invalid')
     } else if (moment().isSameOrAfter(moment(expires))) {
-        expires = 'Expired'
+        expires = i18n('Expired')
     }
 
     $('#key_' + keyHash).html(key)
@@ -203,25 +217,25 @@ function createHashTable(mainKeyHash) {
     <div class="status_table" id="hashtable_${mainKeyHash}">
      <div class="status_row header">
      <div class="status_cell">
-       Hash Keys
+       ` + i18n('Hash Keys') + `
       </div>
       <div class="status_cell">
-        Maximum RPM
+        ` + i18n('Maximum RPM') + `
       </div>
       <div class="status_cell">
-        RPM Left
+        ` + i18n('RPM Left') + `
       </div>
       <div class="status_cell">
-        Usage
+        ` + i18n('Usage') + `
         </div>
       <div class="status_cell">
-        Peak
+        ` + i18n('Peak') + `
         </div>
        <div class="status_cell">
-         Expires At
+         ` + i18n('Expires At') + `
        </div>
        <div class="status_cell">
-         Last Modified
+         ` + i18n('Last Modified') + `
        </div>
      </div>
    </div>`
@@ -255,28 +269,28 @@ function addTable(hash) {
      <div class="status_table" id="table_${hash}">
        <div class="status_row header">
          <div class="status_cell">
-           Username
+           ` + i18n('Username') + `
          </div>
          <div class="status_cell">
-           Success
+           ` + i18n('Success') + `
          </div>
          <div class="status_cell">
-           Fail
+           ` + i18n('Fail') + `
          </div>
          <div class="status_cell">
-           No Items
+           ` + i18n('No Items') + `
          </div>
          <div class="status_cell">
-           Skipped
+           ` + i18n('Skipped') + `
          </div>
          <div class="status_cell">
-           Captchas
+           ` + i18n('Captchas') + `
          </div>
          <div class="status_cell">
-           Last Modified
+           ` + i18n('Last Modified') + `
          </div>
          <div class="status_cell">
-           Message
+           ` + i18n('Message') + `
          </div>
        </div>
      </div>`
@@ -419,11 +433,11 @@ function addTotalStats(result) {
 
         statmsg = 'Total active: ' + accountsActive + ', busy: ' + accountsBusy + ', idle: ' + accountsIdle + ' | Success: ' + scansSuccess.toFixed() + ' (' + successPerHour.toFixed(1) + '/hr) | Fails: ' + scansFailed.toFixed() + ' (' + failsPerHour.toFixed(1) + '/hr) | Empties: ' + scansEmpty.toFixed() + ' (' + emptyPerHour.toFixed(1) + '/hr) | Skips: ' + scansSkipped.toFixed() + ' (' + skippedPerHour.toFixed(1) + '/hr) | Captchas: ' + captchasCount.toFixed() + ' (' + captchasPerHour.toFixed(1) + '/hr) ($' + captchasCost.toFixed(2) + '/hr, $' + captchasCostMonthly.toFixed(2) + '/mo) | Elapsed:  ' + elapsedHours.toFixed(1) + 'h<hr />'
         if (mainWorkers > 1) {
-            title = '(Total Statistics across ' + mainWorkers + ' instances)'
+            title = '(' + i18n('Total Statistics across') + ' ' + mainWorkers + ' ' + i18n('instances') + ')'
         } else {
-            title = '(Total Statistics across ' + mainWorkers + ' instance)'
+            title = '(' + i18n('Total Statistics across') + ' ' + mainWorkers + ' ' + i18n('instance') + ')'
         }
-        $('#name_' + statshash).html('All Instances')
+        $('#name_' + statshash).html(i18n('All Instances'))
         $('#method_' + statshash).html(title)
         $('#message_' + statshash).html(statmsg)
     }
@@ -527,3 +541,26 @@ $(document).ready(function () {
         $('#status_container .worker').remove()
     })
 })
+
+function i18n(word) {
+    if ($.isEmptyObject(i18nDictionary) && language !== 'en' && languageLookups < languageLookupThreshold) {
+        $.ajax({
+            url: 'static/dist/locales/' + language + '.min.json',
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                i18nDictionary = data
+            },
+            error: function (jqXHR, status, error) {
+                console.log('Error loading i18n dictionary: ' + error)
+                languageLookups++
+            }
+        })
+    }
+    if (word in i18nDictionary) {
+        return i18nDictionary[word]
+    } else {
+        // Word doesn't exist in dictionary return it as is
+        return word
+    }
+}
